@@ -1,0 +1,347 @@
+I want you to build a complete full-stack Food Delivery App (like Zomato but better).
+
+Follow all instructions carefully and generate the full working application step by step without asking questions."**
+
+🔥 1. TECHNOLOGY STACK
+Frontend
+
+React + Vite
+
+Tailwind CSS
+
+Framer Motion animations
+
+React Router
+
+Recharts for analytics
+
+Axios for API calls
+
+Lucide Icons or Heroicons
+
+Fully responsive, mobile-first design
+
+Backend
+
+Node.js + Express
+
+JWT Authentication
+
+MongoDB + Mongoose
+
+Cloudinary integration for restaurant images
+
+Razorpay mock API (simulate payments)
+
+Other
+
+localStorage fallback
+
+Secure API routes
+
+Admin dashboard
+
+Delivery partner module
+
+🍽️ 2. APP FEATURES (Better Than Zomato)
+✔ Users can:
+
+Create account (email/phone login)
+
+Browse restaurants
+
+Browse menu items with images
+
+Add items to cart
+
+Place orders
+
+Live delivery tracking (simulate live driver movement)
+
+Rate & review restaurants
+
+View order history
+
+Filter restaurants: Veg, Non-veg, Rating, Price, Offers
+
+Search restaurants and dishes
+
+Save favourite restaurants
+
+📦 3. RESTAURANT FEATURES
+
+Each restaurant must have:
+
+Name
+
+Images
+
+Location
+
+Ratings
+
+Delivery time
+
+Food type (veg/nonveg/mixed)
+
+Price range
+
+Special offers
+
+Menu items (title, description, price, image, isVeg)
+
+🛒 4. CART + CHECKOUT
+
+Add/Remove items
+
+Increase quantity
+
+Apply promo codes
+
+Calculate tax + delivery + platform fees
+
+Payment simulation (like Razorpay test mode)
+
+Order confirmation screen
+
+Estimated delivery time
+
+🚴‍♂️ 5. DELIVERY TRACKING SYSTEM
+
+Auto-assign a delivery partner
+
+Simulate live tracking on map (mock GPS)
+
+Order status timeline:
+
+Order Placed
+
+Accepted
+
+Preparing
+
+On the way
+
+Delivered
+
+Push-style notifications
+
+🛠️ 6. ADMIN PANEL (Full CRUD)
+
+Create a separate Admin Web App where admin can:
+
+Restaurant Management
+
+Add restaurant
+
+Edit restaurant
+
+Delete restaurant
+
+Upload images
+
+Add/Remove menu items
+
+Orders Management
+
+View all orders
+
+Assign delivery partner manually
+
+Change order status
+
+Dashboard Analytics
+
+Total orders
+
+Revenue graph
+
+Active restaurants
+
+Delivery stats
+
+Best-selling items
+
+👨‍🍳 7. DELIVERY PARTNER MODULE
+
+Separate panel for riders:
+
+Rider Login
+
+Orders assigned
+
+Order route map
+
+Change status ("Picked Up", "Delivered")
+
+Revenue & working hours
+
+🎨 8. UI/UX REQUIREMENTS
+
+Make the UI extremely aesthetic and modern:
+
+General UI Style:
+
+Neumorphism + glass-morphism mix
+
+Soft gradients (purple/pink/orange/blue)
+
+Rounded corners (2xl)
+
+Shadows + depth
+
+Smooth animations
+
+Pages required:
+
+Splash screen
+
+Login / Register
+
+Home (featured restaurants)
+
+Restaurant details
+
+Menu page
+
+Cart
+
+Checkout
+
+Payment success
+
+Live delivery tracking
+
+User profile
+
+Order history
+
+Search page
+
+Filter page
+
+Offers page
+
+🔐 9. AUTHENTICATION
+
+Include:
+
+Email + password
+
+Phone + OTP (mock OTP)
+
+JWT login
+
+Role-based access:
+
+user
+
+restaurant-owner
+
+admin
+
+delivery-partner
+
+📡 10. API ROUTES REQUIRED
+AUTH
+
+POST /auth/register
+
+POST /auth/login
+
+POST /auth/send-otp
+
+POST /auth/verify-otp
+
+RESTAURANTS
+
+GET /restaurants
+
+GET /restaurants/:id
+
+POST /restaurants (admin)
+
+PUT /restaurants/:id (admin)
+
+DELETE /restaurants/:id (admin)
+
+MENU
+
+POST /menu/add
+
+GET /menu/:restaurantId
+
+PUT /menu/:id
+
+DELETE /menu/:id
+
+CART
+
+POST /cart/add
+
+GET /cart
+
+POST /cart/remove
+
+POST /cart/clear
+
+ORDERS
+
+POST /order/create
+
+GET /order/:id
+
+GET /orders/history
+
+PUT /order/status (admin & rider)
+
+DELIVERY
+
+GET /delivery/assigned
+
+PUT /delivery/update-location
+
+💰 11. PAYMENT SYSTEM
+
+Integrate Razorpay mock API:
+
+Generate payment order
+
+Complete payment with test key
+
+Return payment confirmation to frontend
+
+📄 12. FINAL DELIVERABLE
+
+You must generate:
+
+Full project folder structure
+
+Complete React frontend
+
+Full Express backend
+
+MongoDB models for all modules
+
+Admin panel
+
+Delivery partner module
+
+All API routes
+
+Authentication system
+
+Payment system
+
+Live tracking logic
+
+Complete UI with Tailwind
+
+Image upload system
+
+Fully documented README
+
+Commands to run the project locally
+
+Start generating the FULL CODE right now step-by-step.
+Do NOT ask any questions.
