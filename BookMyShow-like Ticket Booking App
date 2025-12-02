@@ -1,0 +1,494 @@
+I want you to build a complete full-stack Event, Movie, and Restaurant Booking App (like BookMyShow but much better).
+
+Follow all instructions carefully and generate a full working application step by step without asking questions."**
+
+💻 1. TECHNOLOGY STACK
+Frontend
+
+React + Vite
+
+Tailwind CSS (full aesthetic UI)
+
+Framer Motion animations
+
+React Router
+
+Recharts for analytics
+
+Axios for API calls
+
+Lucide Icons or Heroicons
+
+Firebase or localStorage fallback for sessions
+
+Fully responsive mobile-first UI
+
+Backend
+
+Node.js + Express
+
+MongoDB + Mongoose
+
+JWT Authentication
+
+Role-based access (user, admin, theater-owner, restaurant-owner)
+
+Cloudinary for image upload
+
+Razorpay mock API for payments
+
+🎫 2. MAIN FEATURES (Better Than BookMyShow)
+✔ Users can:
+
+Search movies, shows, events, restaurants
+
+Filter by:
+
+Location
+
+Time
+
+Date
+
+Ratings
+
+Offers
+
+Book:
+
+Movie tickets
+
+Theater show tickets
+
+Comedy shows
+
+Concerts
+
+Restaurant tables
+
+Sports events
+
+View complete seat layout
+
+Choose seats (Premium/Gold/Silver/Recliner)
+
+Real-time seat availability
+
+Add to wishlist
+
+Share event/movie with friends
+
+Apply promo & discount codes
+
+Online payment simulation
+
+View booking history
+
+Get digital ticket with QR code
+
+Show QR for entry
+
+🪑 3. ADVANCED SEAT SELECTION MODULE
+
+Must include:
+
+Seat Layout Types:
+
+Classic rows
+
+Luxury recliners
+
+VIP box seats
+
+Couchette pair seats
+
+3D view seating (optional mock design)
+
+Show:
+
+Booked seats (red)
+
+Available seats (green)
+
+Selected seats (blue)
+
+Disabled seats (grey)
+
+Other:
+
+Auto-select best seats
+
+Seat price calculator
+
+Real-time reservation lock (simulate seat hold)
+
+🎥 4. MOVIE DETAILS PAGE
+
+Include:
+
+Title
+
+Description
+
+IMDB rating
+
+Cast, Crew
+
+Duration
+
+Genre
+
+Trailer (YouTube embed)
+
+Language & format selector (2D/3D/IMAX/4DX)
+
+Show timings
+
+Reviews & ratings
+
+Similar movies
+
+🔥 5. EVENT BOOKING
+
+Types:
+
+Concerts
+
+Sports
+
+Plays & Drama
+
+Comedy nights
+
+Festivals
+
+Workshops
+
+Kids events
+
+Each event should show:
+
+Venue map
+
+Ticket categories
+
+Age restrictions
+
+Pass types
+
+Event guidelines
+
+🍽️ 6. RESTAURANT TABLE BOOKING
+
+Users can:
+
+View restaurants & menu
+
+Select date/time
+
+Choose number of people
+
+See table layout
+
+Get instant confirmation
+
+Pay reservation fees (mock)
+
+🛠️ 7. ADMIN PANEL (Powerful Backend CMS)
+Admin Features:
+
+Add/Edit/Delete:
+
+Movies
+
+Events
+
+Shows
+
+Theaters
+
+Restaurants
+
+Seating layouts
+
+Pricing
+
+Offers & coupons
+
+View all bookings
+
+Dashboard analytics:
+
+Total revenue
+
+Daily/weekly sales
+
+Ticket category performance
+
+Most booked movies
+
+Cancelled bookings
+
+Manage users
+
+Assign theater owners
+
+Theater Owner Dashboard:
+
+Manage shows
+
+Add seat maps
+
+Set pricing per section
+
+Check real-time bookings
+
+Restaurant Owner Dashboard:
+
+Manage tables
+
+Booking schedule
+
+Add menu
+
+Accept/reject reservations
+
+🔐 8. AUTHENTICATION
+
+Include:
+
+Email + password
+
+Phone + OTP (mock system)
+
+Google Login (optional)
+
+JWT login
+
+Role-based permissions:
+
+user
+
+admin
+
+theater-owner
+
+restaurant-owner
+
+💳 9. PAYMENT SYSTEM
+
+Integrate a Razorpay mock API:
+
+Should support:
+
+Card payment
+
+UPI (simulate)
+
+Wallet
+
+Net banking
+
+Promo & discount codes
+
+Refund simulation
+
+📱 10. FRONTEND PAGES REQUIRED
+User Pages
+
+Splash screen
+
+Login / Sign Up
+
+Home (movies/events/restaurants)
+
+City selection
+
+Movie details
+
+Event details
+
+Restaurant details
+
+Seat layout
+
+Table layout
+
+Payment page
+
+Ticket confirmation page
+
+QR Ticket page
+
+Booking history
+
+User profile
+
+Offers page
+
+Wishlist page
+
+Search page
+
+Admin Panels
+
+Admin login
+
+Admin dashboard
+
+Movie management
+
+Event management
+
+Show scheduling
+
+Restaurant management
+
+Table layout manager
+
+Coupon management
+
+Theater Owner
+
+Shows dashboard
+
+Seat map builder
+
+Booking reports
+
+Restaurant Owner
+
+Reservations dashboard
+
+Menu editor
+
+Booking calendar
+
+🗃️ 11. DATABASE MODELS REQUIRED
+
+Create MongoDB models for:
+
+User
+
+Movie
+
+Theater
+
+Show
+
+SeatLayout
+
+Event
+
+Restaurant
+
+TableLayout
+
+Booking
+
+Payment
+
+Review
+
+Coupon
+
+Notifications
+
+📡 12. API ROUTES REQUIRED
+AUTH
+
+POST /auth/register
+
+POST /auth/login
+
+POST /auth/send-otp
+
+POST /auth/verify-otp
+
+MOVIES
+
+GET /movies
+
+GET /movies/:id
+
+POST /movies (admin)
+
+PUT /movies/:id
+
+DELETE /movies/:id
+
+SHOWS
+
+GET /shows
+
+GET /shows/:movieId
+
+POST /shows
+
+PUT /shows/:id
+
+DELETE /shows/:id
+
+SEATS
+
+GET /seats/:showId
+
+POST /seats/lock
+
+POST /seats/book
+
+EVENTS
+
+GET /events
+
+POST /events (admin)
+
+RESTAURANTS
+
+GET /restaurants
+
+POST /restaurants (admin)
+
+BOOKINGS
+
+POST /booking/create
+
+GET /booking/history
+
+PAYMENTS
+
+POST /payment/create
+
+POST /payment/verify
+
+📄 13. FINAL DELIVERABLE
+
+You must generate:
+
+Full project folder structure
+
+Complete React frontend
+
+Full Express backend
+
+All MongoDB models
+
+Admin panel
+
+Theater owner panel
+
+Restaurant owner panel
+
+Seat & table layout modules
+
+Payment system
+
+Fully responsive UI
+
+Animations
+
+Complete documentation + README
+
+Setup + run instructions
+
+Start generating the FULL CODE now — step-by-step — without asking questions.
