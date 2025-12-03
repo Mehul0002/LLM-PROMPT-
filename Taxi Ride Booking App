@@ -1,0 +1,408 @@
+I want you to build a complete full-stack Bike + Taxi Ride Booking App (like Rapido/Uber/Ola but better).
+
+Generate the ENTIRE working application step-by-step without asking questions."**
+
+⚙️ 1. TECHNOLOGY STACK
+Frontend (Customer App)
+
+React + Vite
+
+Tailwind CSS
+
+Framer Motion animations
+
+React Router
+
+Axios for API calls
+
+Mapbox or Google Maps API integration
+
+Heroicons / Lucide Icons
+
+Fully responsive, mobile-first design
+
+Driver App
+
+React Native or React Web (mobile-first design)
+
+Live GPS tracking
+
+Mobile notification support
+
+Backend
+
+Node.js + Express
+
+MongoDB + Mongoose
+
+JWT Authentication
+
+Socket.IO for live tracking
+
+Geocoding & routing API
+
+Payment simulation (Razorpay mock API)
+
+Internal Tools
+
+Admin Dashboard
+
+Driver Onboarding Panel
+
+🛵🚕 2. MAIN FEATURES (Better Than Rapido)
+✔ Users can:
+
+Book Bike, Auto, Taxi, Cab, SUV, Sedans
+
+Set Pickup & Drop using interactive map
+
+See estimated fare before booking
+
+Use GPS to auto-detect location
+
+Apply promo codes
+
+Select seat preference (solo/shared ride)
+
+Track driver live on map
+
+Real-time driver arrival time
+
+Share ride status with family/friends
+
+SOS button for safety
+
+Rate driver & ride
+
+View ride history
+
+Pay via:
+
+Wallet
+
+UPI (mock)
+
+Card
+
+Cash
+
+🏍️ 3. ADVANCED RIDE SYSTEM
+
+🟡 AI-based fare estimation
+
+🟡 Peak hours surge pricing
+
+🟡 Live driver allocation system
+
+🟡 Driver verification (KYC + document upload)
+
+🟡 Driver cancellation penalty
+
+🟡 Wait time charges
+
+🟡 Multiple ride options:
+
+Bike
+
+Rapido-style Bike Taxi
+
+Auto
+
+Micro Taxi
+
+Mini Taxi
+
+Sedan
+
+SUV
+
+Shared taxi
+
+🟡 User & driver chat system (text chat)
+
+🟡 Driver arrival countdown
+
+🟡 Smart matching algorithm:
+
+Nearest driver
+
+Driver rating
+
+Driver acceptance rate
+
+Traffic conditions
+
+🗺️ 4. MAP & GPS FEATURES
+
+Must use Mapbox or Google Maps JS API.
+
+Include:
+
+Live driver marker
+
+Route drawing
+
+Distance & time calculation
+
+Realtime driver movement animation
+
+Multiple car icons:
+
+Bike icon
+
+Auto icon
+
+Car icon
+
+💸 5. FARE CALCULATION SYSTEM
+
+Use dynamic fare formula:
+
+Base Fare + (Distance × Cost per KM) + (Time × Cost per Minute) + Surge + Platform Fee - Discounts
+
+
+Extra fees:
+
+Waiting charges
+
+Toll charges
+
+Night charges
+
+Peak hour surge
+
+📱 6. FRONTEND SCREENS (Customer App)
+1. Splash Screen
+2. Login / Signup / OTP
+3. Home Map Screen
+4. Select Ride Type
+5. Fare Estimate Page
+6. Driver Searching Animation
+7. Driver Found Screen
+8. Live Ride Tracking
+9. Payment Page
+10. Ride Summary
+11. User Profile
+12. Wallet Page
+13. Offers / Promo Page
+14. Ride History
+15. SOS Safety Page
+
+UI must be modern, aesthetic, glass-morphism, animated.
+
+👨‍✈️ 7. DRIVER APP FEATURES
+
+Drivers can:
+
+Complete KYC:
+
+Aadhaar
+
+PAN
+
+Driving license
+
+Vehicle RC
+
+Profile picture
+
+Receive ride requests
+
+Accept / Reject ride
+
+Navigate to pickup
+
+Navigate to drop location
+
+Start & end trip
+
+Update live location via GPS
+
+See daily earnings
+
+See weekly earnings
+
+Rate customer
+
+Manage availability (Online/Offline)
+
+🛠️ 8. ADMIN PANEL FEATURES
+
+Admin can:
+
+User Management
+
+List all users
+
+Block/unblock
+
+View rides
+
+Driver Management
+
+KYC approval
+
+Vehicle approval
+
+Live tracking of all drivers
+
+Earnings management
+
+Driver ratings
+
+Ride complaints
+
+Ride Management
+
+View all rides
+
+Live tracking overview
+
+Ride cancellation reasons
+
+Refund management
+
+Analytics Dashboard
+
+Total rides today
+
+Daily revenue
+
+Weekly revenue graph
+
+Active drivers
+
+Peak traffic hours
+
+City-wise analytics
+
+Promo Management
+
+Add coupons
+
+Expiry time
+
+Discount percentage
+
+Minimum fare
+
+🔐 9. AUTHENTICATION
+
+Include:
+
+Email + Password login
+
+Phone number login + OTP (mock)
+
+JWT token support
+
+Roles:
+
+user
+
+driver
+
+admin
+
+💳 10. PAYMENT SYSTEM
+
+Use Razorpay mock API:
+
+POST /payment/create
+
+POST /payment/verify
+
+Wallet top-up simulation
+
+Payment success callback
+
+Refund API
+
+📡 11. API ROUTES REQUIRED
+AUTH
+POST /auth/register  
+POST /auth/login  
+POST /auth/send-otp  
+POST /auth/verify-otp  
+
+USER
+GET /user/profile  
+PUT /user/update  
+GET /user/rides  
+
+DRIVER
+POST /driver/onboard  
+POST /driver/kyc-upload  
+GET /driver/rides  
+PUT /driver/location  
+PUT /driver/status  
+
+RIDES
+POST /ride/create  
+POST /ride/assign  
+GET /ride/status/:id  
+PUT /ride/update-status  
+POST /ride/cancel  
+
+PAYMENTS
+POST /payment/init  
+POST /payment/verify  
+
+MAP + LOCATION
+POST /map/distance  
+POST /map/geo  
+POST /map/route  
+
+🗄️ 12. DATABASE MODELS REQUIRED
+
+Create MongoDB models for:
+
+User
+
+Driver
+
+Vehicle
+
+Ride
+
+Payment
+
+PromoCode
+
+Rating
+
+LocationLogs
+
+📦 13. FINAL DELIVERABLE
+
+You must generate:
+
+Full project folder structure
+
+Complete React frontend (customer app)
+
+Complete React Native or mobile-first driver app
+
+Full Express backend
+
+All MongoDB models
+
+Real-time tracking with Socket.IO
+
+Fare calculation logic
+
+Seat & pricing module
+
+Payment system
+
+Notification system
+
+Admin dashboard
+
+Driver onboarding panel
+
+Complete setup documentation
+
+README with run instructions
+
+Start generating the FULL CODE right now — step-by-step — without asking questions.
