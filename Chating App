@@ -1,0 +1,356 @@
+Project goal summary
+
+Build a full-stack chat application with:
+
+Phone number sign-in (OTP verification)
+
+Real-time 1:1 chat, group chats, channels (broadcasts)
+
+Typing indicators, read receipts, message delivery states
+
+Media (images, video, audio), file sharing, compress/preview
+
+Voice & video calling (WebRTC fallback)
+
+Strong security: transport security (HTTPS/WSS) and optional end-to-end encryption (device keys + encrypted backups)
+
+Push notifications (FCM) and in-app notifications
+
+Multi-device support (sync with secure per-device keys)
+
+Admin/Moderator dashboard and reporting tools
+
+Polished, responsive UI (mobile-first) — dark mode, accessibility
+
+1. Technology stack (use these exact choices)
+
+Frontend (Web + PWA + optional React Native mobile later)
+
+React + Vite
+
+TypeScript
+
+Tailwind CSS (design system)
+
+Zustand / Redux Toolkit for state
+
+React Router
+
+react-query / TanStack Query for data sync
+
+Framer Motion for transitions
+
+WebRTC client for calls
+
+Service Worker for offline & PWA
+
+Firebase Cloud Messaging (FCM) for push (web + mobile)
+
+Backend
+
+Node.js + TypeScript + Express (or Fastify)
+
+Socket.IO (or WebSocket with Redis adapter) for real-time events
+
+MongoDB (Atlas) for primary datastore
+
+Redis for pub/sub, presence, ephemeral sessions, rate limiting
+
+Mongoose for models
+
+Cloud Storage: S3 (or Cloudinary for images)
+
+Job queue: Bull/Queue (Redis) for background tasks (media processing, notifications)
+
+Twilio (or test/mocked OTP provider) for SMS OTP verification
+
+JWT + Refresh Tokens for session management
+
+Security / Crypto
+
+libsodium / tweetnacl for crypto primitives
+
+Use existing Signal/Olm/Double Ratchet library if available; otherwise implement per-device keypairs with NaCl/X25519 + symmetric AEAD (ChaCha20-Poly1305) for E2E message encryption
+
+HTTPS, secure cookies, CORS, helmet, rate limiting, input validation
+
+Dev / Infra
+
+Docker compose for local dev (mongo, redis)
+
+CI: GitHub Actions for tests & linting
+
+Deployment targets: Vercel/Render for frontend, Heroku/GCP/AWS for backend (instructions included)
+
+2. UX / UI Requirements (very specific)
+
+Mobile-first design, responsive to tablet/desktop
+
+Clean minimal aesthetic: font (Inter or Poppins), soft rounded UI, subtle gradients, 2-color accent design
+
+Conversations list with avatars, last message preview, unread badges, swipe actions (archive/delete)
+
+Chat screen: message bubbles, timestamps, reactions, reply preview, message thread view
+
+Floating composer with attachments, emoji picker, voice recording, file picker
+
+Contact/profile screens, search (contacts & messages), starred messages, archived chats, settings
+
+Group creation flow with roles (admin/moderator), group info page, member management
+
+Channel (one-to-many) UI: subscribe/unsubscribe, pinned posts
+
+Dark mode toggle + auto follow system theme
+
+Accessibility: keyboard nav, ARIA roles, high contrast support
+
+3. Core features & behaviors
+Authentication & Onboarding
+
+Phone number input → send OTP via Twilio (or mock).
+
+Verify OTP → create user account (name, avatar, optional username).
+
+Optional email backup for account recovery.
+
+Generate per-device keypair on first login (for E2E). Store private key encrypted locally with device PIN/password; store public key on server.
+
+Contacts & Discovery
+
+Contacts: import from address book (ask permission) or search by phone/username.
+
+Contact requests: allow privacy settings (who can message me).
+
+Sync contacts hashed to server for matching without leaking raw numbers (use HMAC).
+
+Real-time Messaging
+
+Socket connection authenticated with JWT.
+
+Message model: { id, chatId, from, to (user|group), type (text,image,video,file,location,sticker), body (possibly encrypted), mediaMeta, status (sent, delivered, read), createdAt }
+
+Acknowledge flow: sent → received by server → delivered to recipient device(s) → read. Show statuses accordingly.
+
+Typing indicators & presence (online/lastSeen). Presence stored in Redis with TTL.
+
+Groups & Channels
+
+Group chats: admins, moderators, members; invite links; join request workflow.
+
+Channels (one-to-many): admins post messages; subscribers receive.
+
+Media & Files
+
+Client compresses images/videos before upload.
+
+Uploads go to signed S3/Cloudinary URLs via backend.
+
+Server transcodes/thumbnail generation in background queue.
+
+Preview placeholders while uploading.
+
+Voice / Video Calls
+
+WebRTC for peer connections. Use backend as signaling server (Socket.IO) + TURN fallback (coturn).
+
+Show live call UI, mute, camera toggle, switch audio output, end call.
+
+Call recording only with explicit consent (if implemented).
+
+End-to-End Encryption (E2E) — OPTIONAL but provide implementation plan
+
+Per-device keypairs (X25519 for key exchange).
+
+Use asymmetric key agreement to derive shared secret for symmetric AEAD (ChaCha20-Poly1305).
+
+Implement double-ratchet if possible (or reuse an existing library like libsignal if available).
+
+Messages encrypted on client; server stores only ciphertext and routing metadata (sender, recipients).
+
+Multi-device: maintain per-device session keys. Provide encrypted backups (user sets passphrase; backup stored encrypted on server).
+
+Key rotation & forward secrecy plan included.
+
+Multi-device & Sync
+
+Each device registers a deviceId with a public key.
+
+Server routes messages to all online devices of recipient.
+
+For offline devices, messages kept for delivery; once device connects use device sync to fetch missed messages and decrypt locally.
+
+Notifications
+
+Push via FCM for web and mobile.
+
+Notifications deliver message preview only if user did not disable plaintext previews; for E2E show “New message” if previews disabled.
+
+Background handling for incoming calls (push notification triggers client to open app).
+
+Search, Reactions, Edit/Delete
+
+Full-text search (Elasticsearch optional, otherwise Mongo text indexes) for messages.
+
+Allow message edit within configurable window; edits marked and logged.
+
+Delete for me / delete for everyone (time window + admin override).
+
+Reactions (emoji) and threaded replies.
+
+Moderation & Safety
+
+Reporting messages & users; admin panel to review.
+
+Rate limiting & spam detection (automated heuristics).
+
+Content policy for harmful content & attachments scanning (optional).
+
+4. Backend API & Socket routes (must implement these)
+
+HTTP
+
+POST /auth/send-otp — body: { phone }
+
+POST /auth/verify-otp — body: { phone, otp, deviceInfo } → returns access + refresh token, deviceId, publicKey upload URL
+
+POST /auth/refresh — body: { refreshToken }
+
+GET /user/me
+
+PUT /user/me — update name/avatar/status
+
+POST /contacts/sync — hashed contacts
+
+GET /contacts
+
+GET /conversations — list with pagination
+
+GET /conversations/:id/messages?since=
+
+POST /conversations — create chat/group/channel
+
+POST /messages — send message (server stores metadata; if E2E, accept only ciphertext)
+
+POST /media/upload-session — return signed S3 url
+
+GET /search?q=
+
+POST /report — message/user reporting
+
+Admin: GET /admin/reports, PUT /admin/ban-user, etc.
+
+Socket.IO events
+
+connect (auth)
+
+presence:update
+
+typing:start / typing:stop
+
+message:send → server ACKs message:sent / message:delivered / message:read
+
+call:offer / call:answer / call:candidate / call:end
+
+device:register / device:unregister
+
+5. Database models (MongoDB) — essential fields
+
+User: { _id, phoneHash, username, displayName, avatarUrl, bio, publicKeys: [{ deviceId, pubKey }], createdAt, settings }
+
+Device: { deviceId, userId, lastSeen, pushTokens }
+
+Conversation: { _id, type: one2one|group|channel, members: [userId], admins: [userId], lastMessageId, createdAt }
+
+Message: { _id, conversationId, from, type, body (ciphertext or plaintext), mediaMeta, statusPerDevice: [{ deviceId, status }], createdAt, editedAt }
+
+Media: { key, url, size, mime, ownerId, createdAt }
+
+Report, BlockList, Notification, OTP logs, etc.
+
+6. Deliverables (explicit)
+
+AI must produce the following artifacts step-by-step:
+
+Project scaffolding for frontend & backend (TypeScript).
+
+Auth flow with OTP send/verify (with Twilio integration and a mocked fallback for dev).
+
+Socket server + client integration with typed events.
+
+Conversation list & chat UI with message composer, media, reactions, typing indicators, read receipts.
+
+Media upload flow with signed URLs and background processing (thumbnail).
+
+WebRTC signaling + sample call UI (voice + video).
+
+End-to-end encryption option implemented on client side with sample key management + server storing only ciphertext. Provide a simple library wrapper for encrypt/decrypt using libsodium.
+
+Push notifications (FCM) integration and service worker for PWA.
+
+Redis presence + Socket.IO adapter for horizontal scaling.
+
+Admin dashboard (React) for user/moderation management and viewing reports.
+
+Docker Compose for local dev (api, mongo, redis).
+
+Unit tests for critical backend modules (auth, message routing) and some frontend component tests.
+
+CI workflow (GitHub Actions) for lint/test/build.
+
+Complete README: run locally, env vars, Twilio/FCM setup, deployment steps (Vercel + Heroku/AWS), security considerations.
+
+Migration & seed scripts to create demo users and sample conversations.
+
+7. Extra engineering notes (must include in the repo)
+
+Detailed security checklist (CSP, HTTPS, helmet, rate limiter, input sanitization).
+
+Scalability notes: how to scale socket layer (redis adapter), use sticky sessions, using Kafka for massive throughput.
+
+Privacy notes: how phone numbers are protected (hashing on client with HMAC), what metadata is stored, and how to implement GDPR/CCPA features (data export & deletion).
+
+Key backup & recovery UX: encrypted backup with user passphrase (zero-knowledge).
+
+Testing plan for E2E encryption correctness and multi-device sync edge cases.
+
+Performance tips for large groups: message pagination, ephemeral messages, lazy loading attachments.
+
+8. UX copy & microcopy examples to include
+
+Add ready microcopy for onboarding, errors, and security prompts, e.g.:
+
+“We’ll send a one-time code to verify your number.”
+
+“Messages are end-to-end encrypted — only you and recipients can read them.”
+
+“Back up your messages: choose a secure passphrase only you know.”
+
+9. Acceptance criteria (what “done” looks like)
+
+Able to sign up / verify phone & log in.
+
+Real-time 1:1 messaging works across two browser windows/devices.
+
+Media upload & playback works.
+
+Typing indicators, delivery & read receipts visible and accurate.
+
+WebRTC voice call establishes between two clients (basic).
+
+Optional E2E flow: client can encrypt outgoing messages and recipient client can decrypt them (demo mode).
+
+Push notifications arrive when app is backgrounded.
+
+Admin can view reports & ban a user.
+
+Project runs locally using Docker Compose and instructions in README.
+
+10. Final instruction for Replit AI
+
+Start by generating the repo tree and package.json files for frontend & backend.
+
+Then scaffold auth (OTP + JWT), socket server, and a minimal chat UI that demonstrates a working message roundtrip.
+
+Continue feature by feature (media, calls, E2E, notifications, admin) — produce tested code, TypeScript types, and clear comments for every module.
+
+Do not ask questions — produce code and documentation step-by-step until the full deliverables above are complete.
