@@ -1,0 +1,371 @@
+Project goal: A full-stack, production-grade instant grocery app with sub-30-minute delivery support, multi-warehouse inventory, smart batching & routing, rider app, admin ops, merchant onboarding, personalized recommendations, rich search & filters, and modern UI/UX. Provide frontend (customer PWA), backend services (API, order engine), rider/partner app, and admin/merchant dashboards.
+
+1) Tech stack (exact)
+
+Frontend (Customer PWA)
+
+React + Vite + TypeScript
+
+Tailwind CSS for UI
+
+Zustand (or Redux Toolkit) for state
+
+React Query (TanStack) for server state
+
+Framer Motion for animations
+
+Mapbox / Google Maps for maps/routing
+
+Service Worker + PWA support (offline browsing & cart)
+
+Rider App
+
+React (mobile-first) or React Native (if mobile packaging) + TypeScript
+
+Socket.IO for realtime updates
+
+Geolocation + background location updates
+
+Merchant / Admin Dashboard
+
+React + TypeScript + Tailwind (separate app)
+
+Backend
+
+Node.js + TypeScript + Express or Fastify
+
+MongoDB (Atlas) for primary data store
+
+Redis for caching, locks, pub/sub, rate limiting, ephemeral sessions
+
+PostgreSQL optional for transactional data (orders/payments) — choose one or both; include migration strategy
+
+RabbitMQ / Bull (Redis) for background jobs (routing, notifications, analytics)
+
+Socket.IO for realtime (order updates, rider tracking)
+
+S3 / Cloudinary for images & media
+
+Payment gateway simulated (Razorpay / Stripe test)
+
+Optional: ElasticSearch for product search & relevance
+
+DevOps
+
+Docker Compose for local dev (api, mongo, redis, worker)
+
+GitHub Actions for CI (lint, test)
+
+Deployment guides for Vercel/Render/AWS/GCP
+
+2) Core product features (customer-facing)
+
+Browse nearby stores / hyperlocal dark stores with inventory availability
+
+Fast search with autocomplete, faceted filters, category browsing
+
+Rich product pages: images, weight/pack variants, stock level, expiry info, nutrition (where applicable)
+
+Add to cart, quantity/variant selection, saved lists/favourites
+
+Express checkout: saved addresses, multiple payment options, promo codes, wallet
+
+Slot-based delivery: ASAP (fastest) or scheduled slots (today or later)
+
+Real-time order status: accepted, picking, picked, rider assigned, out for delivery, delivered
+
+Live tracking of rider on map with ETA & route
+
+Order editing (before packing cutoff), cancelation & returns policy flow
+
+Rating & reviews for products & stores
+
+Personalized home: recommendations, trending items, reorders, smart lists (based on past buys)
+
+Push notifications & in-app notifications for order updates, offers, and rider arrival
+
+Offline-friendly cart & browse (PWA cached categories & images)
+
+3) Advanced logistic + operational features (what makes it better)
+
+Multi-warehouse inventory: nearest fulfillment node selection, real-time inventory sync, fallbacks to neighbouring warehouses
+
+Smart order batching & consolidation: batch orders in same zone/time window for single rider when profitable
+
+Route optimization: compute best route for rider pickups & multi-deliveries (3-10 stops) using heuristics or map-routing API
+
+Delivery ETA & dynamic pickup allocation: choose fulfillment node that minimizes ETA & cost
+
+Auto-retry & failover: if item out-of-stock during picking, show substitutes & auto-assign replacements from same/different warehouse
+
+Slot & capacity management for each micro-warehouse (max orders per time unit)
+
+Rider pooling & shift management: rider availability, surge pricing, peak incentives
+
+Smart substitutions: rules for auto-substitute (same brand, same category, price limits), and notify customers for approval
+
+Cold chain / special handling flags for perishables & fragile items
+
+4) Merchant & admin features
+
+Merchant Dashboard
+
+Add products, variants, pricing, offers
+
+Inventory sync & batch uploads (CSV)
+
+Incoming orders feed (accept/prepare)
+
+Packing list & pick list generation
+
+Sales reports & low-stock alerting
+
+Admin Dashboard
+
+Overview: orders, revenue, active riders, active warehouses
+
+Manage stores / dark stores / micro-fulfillment centers
+
+Assign riders, manage rider onboarding & KYC
+
+Coupons & campaigns manager (time-based, user-segment based)
+
+Fraud & refunds management
+
+Customer support dashboard: view order timeline, chat with rider, process refunds
+
+Analytics: retention, LTV, cohort analysis, demand heatmap by time & area
+
+5) Rider app features
+
+Login / KYC / document upload
+
+Accept/reject trip / order batches
+
+Pickup & drop workflows with QR scanning at store (for confirmation)
+
+Turn-by-turn navigation with route & alternative route suggestions
+
+Real-time location updates (every few seconds using sockets)
+
+Earnings dashboard, shift history, daily payouts
+
+In-app chat with support & customer (optional)
+
+SOS / safety button & incident reporting
+
+6) Payments, promos & wallets
+
+Simulate integration with payment gateways (Razorpay/Stripe test keys)
+
+Multi-payment methods: card, UPI (mock), wallet, cash on delivery (COD) — with limits
+
+Wallet & refunds handling: store credit, promotional wallet
+
+Promo engine: combinable rules, priority, targeting, usage limits
+
+Taxation breakdown and invoice generation (basic)
+
+7) Order lifecycle & APIs (high-level)
+
+Implement RESTful APIs + websockets. Provide these routes (examples):
+
+Auth
+
+POST /auth/register — body: { phone, name, otp? }
+
+POST /auth/login — returns JWT + refresh token
+
+POST /auth/refresh
+
+Customer
+
+GET /stores?lat=&lng=&radius= — list of nearby fulfillment nodes
+
+GET /store/:id — store details + categories
+
+GET /products?query=&category=&storeId= — search
+
+GET /product/:id
+
+POST /cart — add/update cart
+
+GET /cart
+
+POST /checkout — create order (includes payment intent)
+
+GET /order/:id — status & timeline
+
+POST /order/cancel
+
+POST /order/return
+
+Merchant
+
+POST /merchant/product — add product
+
+PUT /merchant/product/:id
+
+GET /merchant/orders
+
+Rider
+
+POST /rider/accept-order
+
+PUT /rider/location — realtime location updates (via socket or REST fallback)
+
+PUT /rider/status — (online/offline)
+
+Admin
+
+GET /admin/orders
+
+PUT /admin/order/:id/status
+
+Add socket events:
+
+order:created → notify assigned store & fleet
+
+order:update → notify customer & rider
+
+rider:location → broadcast to specific order channels
+
+8) Data models (key Mongo schemas)
+
+User: { _id, name, phone, addresses[], wallet, preferences, createdAt }
+
+Store: { _id, name, location{lat,lng}, openingHours, inventory[], capacity, rating }
+
+Product: { _id, storeId, title, variants[{size, price, sku, stock}], category, images[], tags }
+
+Cart: { userId, items[{productId, variantId, qty}], storeId, appliedPromo }
+
+Order: { _id, userId, storeId, items[], total, paymentStatus, statusTimeline[], assignedRider, eta, substitutions[], createdAt }
+
+Rider: { _id, name, vehicleType, location, status, earnings }
+
+Promo: { code, discountType, rules, usageLimit, validFrom, validTo }
+
+InventoryEvent / Audit log for reconciliation
+
+9) Search & recommendations
+
+Search: ElasticSearch (recommended) or Mongo text index for product name/brand; support fuzzy search & autocomplete
+
+Recommendations: simple collaborative + content-based model:
+
+“Frequently bought together” via association rules
+
+“Reorder” suggestions based on user history
+
+Personalized frontpage using recency & frequency heuristics
+
+Provide a simple ML-ready export script for future model training.
+
+10) Reliability, scalability & monitoring
+
+Rate-limit API endpoints, use Redis for rate limiting & locks
+
+Use background workers for heavy tasks (route optimization, image resizing)
+
+Socket scaling: use Socket.IO Redis adapter / scalable pub-sub
+
+Monitoring: integrate basic Prometheus metrics + Grafana (or use third-party Sentry / Datadog examples)
+
+Data backups & recovery strategy (DB backups & inventory reconciliation)
+
+11) Testing, CI & docs
+
+Unit tests for core backend modules (order creation, inventory checks, promo application)
+
+Integration tests for checkout flow
+
+End-to-end smoke test for order placement → assignment → delivery simulation
+
+GitHub Actions: lint, test, build for frontend & backend
+
+Provide detailed README with env variables, running locally, Docker Compose, seed data & demo scripts
+
+12) UX / UI specifics (customer PWA)
+
+Clean modern grocery-first UI: large product imagery, quick-add buttons, category chips, pinned frequently-bought items
+
+Smooth micro-interactions for add-to-cart, cart badge updates, and checkout modals
+
+Dark mode toggle & accessible color contrast
+
+Onboarding: quick address setup, payment method, and a sample first order coupon
+
+Cart drawer with editable quantities, substitution acceptance toggle, and delivery slot selector
+
+Order timeline UI with live rider map & ETA carousel
+
+“Smart quick reorder” CTA on homepage and order confirmation screens
+
+13) Security & compliance
+
+HTTPS only, helmet, input validation, sanitization
+
+Rate limits & brute-force protections
+
+Access control for merchant/admin endpoints
+
+Personal data handling: mask phone numbers in logs, GDPR-ready "export & delete" endpoints
+
+14) Extra value-add features (make it better than Blinkit)
+
+Express pickup lockers integration (for contactless pickup)
+
+Subscription plan for free deliveries & special prices
+
+Voice search for hands-free shopping
+
+Group orders for offices with split payments & shared cart
+
+Green delivery options: choose slower eco option with lower fees
+
+Smart pantry: auto-reorder subscription with adjustable frequency
+
+Live chat support with canned responses & smart agent suggestions for CS
+
+15) Deliverables (explicit)
+
+When finished, generate everything below in the repo:
+
+Full monorepo structure (customer PWA, rider app, merchant app, admin app, backend API, workers).
+
+Working seed data & scripts to populate demo stores, products, and riders.
+
+Docker Compose for local dev (API, Mongo, Redis, worker).
+
+Complete REST API + Socket.IO server with TypeScript types and tests.
+
+Customer PWA with browse/search, cart, checkout, order tracking & live rider map.
+
+Rider app with accept workflow & location updates (web/mobile).
+
+Merchant & Admin dashboards.
+
+Promo engine & wallet simulation.
+
+Route optimization worker (mock implementation using map API + simple optimizer).
+
+README with env variables, run steps, deployment notes, and scaling guidance.
+
+Basic CI workflow for lint/test/build.
+
+Security checklist & monitoring suggestions.
+
+Final instruction for the AI agent
+
+Start by scaffolding the repo tree and package.json files for each app & the backend.
+
+Implement auth (JWT), store/product models, cart & checkout flow, and inventory checks first.
+
+Then build sockets for order updates and a basic rider simulation to demonstrate live tracking.
+
+Continue feature-by-feature (search, promos, routing worker, dashboards), producing runnable code with comments.
+
+Add tests, Docker Compose, and a comprehensive README.
+
+Do not ask clarifying questions — generate code and documentation step-by-step until all deliverables are complete.
