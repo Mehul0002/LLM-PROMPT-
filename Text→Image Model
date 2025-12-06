@@ -1,0 +1,342 @@
+I want you to build a complete, production-grade, open, safe, and reproducible Text→Image system comparable to Midjourney (but respecting legal/ethical limits). Follow all instructions exactly. Generate full code, configs, infra, and documentation step-by-step without asking questions. Deliver a runnable repo that trains, fine-tunes, serves, and provides a web UI and API. Include safety, moderation, licensing, and evaluation.
+
+High-level goals:
+
+A latent diffusion / stable-diffusion style model (text→image) with prompt conditioning, guidance, negative prompts, multi-seed reproducibility, and fast inference.
+
+Production features: prompt editor, gallery, presets, upscaler, face-fixer, variations, image upload→inpaint, batch generation, seeds, aspect ratios, and watermarking.
+
+Safety & compliance: NSFW filtering, copyright filtering options, opt-out watermarking, and content policy enforcement.
+
+Reproducible training pipeline with dataset curation tools and dataset license tracking.
+
+Deployment: scalable inference API (GPU), simple web UI (mobile responsive), and CLI.
+
+Provide thorough README, model card, benchmarks (FID/IS/human eval), and costs/compute estimates.
+
+1) TECHNOLOGY STACK (must use these)
+
+ML framework: PyTorch (latest stable) + Accelerate (Hugging Face)
+
+Diffusion core: Latent Diffusion / Stable Diffusion variant (use CompVis / Stable Diffusion v1.x architecture as base) OR open-source Latent Diffusion implementation. Use OpenCLIP text encoder (or HuggingFace CLIP / T5-text encoder) for text conditioning.
+
+Tokenization: Hugging Face tokenizers (BPE) or CLIP tokenizer.
+
+Data storage: parquet/TFRecord style manifest + hashed filenames; use S3 compatible storage for large datasets. Keep per-image license metadata (license, source, author).
+
+Training infra: PyTorch Lightning + Hugging Face Accelerate; support mixed precision (fp16) and DeepSpeed ZeRO stage 2/3 optional.
+
+Model ops: ONNX / TorchScript export for CPU fallbacks, and Triton or FastAPI + Uvicorn + CUDA for GPU serving.
+
+Web UI: React + Vite + Tailwind; PWA friendly.
+
+Backend API: FastAPI (Python) for inference + user management + jobs. Use Celery/Bull (Redis) or background workers for long tasks (upscaling). Use Socket.IO or WebSockets for streaming generation updates.
+
+Extras: Real-ESRGAN for upscaling, GFPGAN for face restoration, image inpainting (latent diffusion inpaint), safety classifiers (NSFW), perceptual hashing (pHash) for duplicate/copyright checks.
+
+Storage/DB: PostgreSQL for user/accounts, Redis for cache/queues, S3 for images and model artifacts.
+
+Monitoring: Prometheus + Grafana + Sentry for errors.
+
+2) DATA — curation, licensing & preprocessing
+
+Datasets to use (examples & guidance, require verification):
+
+Prioritize: CC0 / Public domain image sets, Wikimedia Commons, LAION-filtered subsets with explicit license metadata, datasets you have rights to.
+
+Avoid training on spiders of copyrighted images without permission. If you use LAION/others, include license filtering steps and opt-out lists.
+
+Curation pipeline (must implement):
+
+Ingest manifest: CSV/JSONL with image URL/path + caption/prompts + license tag + source + author.
+
+Fetch + verify: Download images, validate format, compute checksum, store metadata.
+
+Dedup & near-dup removal: pHash & perceptual similarity clustering.
+
+License filter: Keep only images with acceptable license (CC0, CC-BY, permissive commercial). Mark others as “restricted” (do not include in public model).
+
+Caption cleaning & augmentation: Normalize text, remove PII, remove watermarks in captions, optionally create synthetic prompts (caption templates).
+
+Resolution & aspect ratio: Resize to fixed latent model size (e.g., 512×512 or 768×768) — keep aspect ratios via padding or train with variable conditioning.
+
+Create training shards: store local S3 paths + metadata; create balanced splits train/val/test.
+
+Dataset license manifest: JSON file mapping image id → license + source + copyright owner for audit.
+
+Data size recommendations:
+
+Small experimental model: 100k–500k image/caption pairs.
+
+Competitive quality: 1M+ pairs (compute heavy).
+
+Note: quality matters more than raw scale; curated captions & high-res images yield better results.
+
+3) MODEL ARCHITECTURE & TRAINING CONFIG
+
+Architecture (recommended):
+
+Text encoder: OpenCLIP ViT-L/14 or CLIP ViT-B/32 (depends on compute). Optionally support T5/FLAN encoder for richer text.
+
+Image latent autoencoder (VAE): use pre-trained VAE from Stable Diffusion (train/fine-tune VAE if desired).
+
+U-Net diffusion model in latent space with cross-attention conditioning on text embeddings.
+
+Scheduler: DDIM or DPMSolver for faster sampling; training uses noise schedule (cosine).
+
+Training pipeline:
+
+Pretrain or start from a Stable Diffusion checkpoint (recommended to fine-tune rather than train from scratch unless you have massive compute).
+
+Use text encoder weights frozen initially, optionally finetune joint later.
+
+Use gradient accumulation to simulate larger batch sizes.
+
+Mixed precision: use AMP (torch.cuda.amp).
+
+Batch size per GPU: choose depending on GPU memory; use gradient accumulation for effective batch size.
+
+Metrics to log: loss, validation reconstruction, FID (on validation subset), CLIP score (prompt→image alignment).
+
+Hyperparams (starter config):
+
+Image size: 512×512 latent (or 768 for higher quality)
+
+Batch size: 64 effective (accumulate)
+
+Learning rate: 1e-5 to 5e-5 for U-Net fine-tuning (tune)
+
+Optimizer: AdamW with weight decay 0.01
+
+Scheduler: cosine with linear warmup (1000 steps)
+
+Training steps: depends on dataset size — e.g., 200k–1M steps for fine-tuning; 1M+ for large training
+
+EMA on weights: yes (decay 0.9999)
+
+Guidance at inference:
+
+Classifier-free guidance (CFG) with guidance scale 4–12 (user adjustable).
+
+Sampling steps: 20–50 steps recommended for balance of speed/quality.
+
+Support seeds for reproducibility.
+
+4) SAFETY, MODERATION & COPYRIGHT
+
+Must implement the following safeguards in both training and serving:
+
+License filter at training: Only allow images with clear permissive license OR images where you have explicit rights. Keep a manifest for audit.
+
+NSFW classifier: Train or use off-the-shelf NSFW classifier (e.g., Yahoo OpenNSFW or Safety models) to filter outputs & inputs.
+
+Prompt safety rules: Detect prompts requesting illegal/explicit content, publicly available personal info, or copyrighted logos; refuse or warn.
+
+Copyright check: After generation, compute similarity (pHash + CLIP cosine) against a copyrighted image database (opt-in) to flag near-replications. If too close, withhold image and log.
+
+Watermarking/attribution: Provide option to embed a subtle visible watermark on generated images (or metadata watermark). Add model card and license terms.
+
+Opt-out mechanism: Respect any dataset owner opt-outs and a takedown process (admin panel).
+
+Rate limits & abuse detection: throttle heavy usage and suspicious prompts.
+
+Include a content policy page in the repo and an admin takedown workflow.
+
+5) INFERENCE SERVING & API
+
+Serve model with: FastAPI + Uvicorn + Gunicorn workers, using TorchServe or custom endpoint optimized for GPU.
+
+API endpoints:
+
+POST /v1/generate — body: { prompt, negative_prompt, width, height, steps, guidance_scale, seed, num_images, style_preset, user_id } → streams progress events and returns image URLs or base64.
+
+POST /v1/inpaint — for masked inpainting using image + mask + prompt.
+
+POST /v1/variation — create variations of an image (seed control).
+
+POST /v1/upscale — run Real-ESRGAN on generated image.
+
+GET /v1/status/:job_id — job status.
+
+GET /v1/model/info — model metadata + license + model card.
+
+POST /v1/auth/login — API key / user auth.
+
+Job queue: Use Redis + RQ/Celery to schedule long jobs; return job id to user and allow websocket progress. Support synchronous quick generation for single small requests.
+
+Performance & scaling:
+
+Use GPU instances (A100 / A10G / V100 or equivalent).
+
+Batch inference when many concurrent requests; implement a priority queue.
+
+Export optimized model to TensorRT/ONNX for faster CPU/GPU inference optionally.
+
+6) WEB UI FEATURES (React)
+
+Core UI pages:
+
+Homepage with prompt presets, trending gallery, and search.
+
+Prompt editor: prompt + negative prompt, style presets, aspect ratio, seed, steps, guidance slider.
+
+Live preview / progress bar with streamed updates (low-res preview quickly).
+
+Gallery: saved generations with metadata (prompt, seed, date, user).
+
+Inpainting editor: upload image, paint mask, enter prompt.
+
+Variations & upscale buttons per image.
+
+Account page: API keys, usage, credit balance, opt-out preferences.
+
+Admin panel: content flags, takedown requests, dataset manifest viewer.
+
+UX niceties:
+
+Prompt templates + “surprise me” mode.
+
+Style modifiers (photorealistic, anime, oil painting etc).
+
+Negative prompt quick buttons (no text, no watermark, low-quality).
+
+Mobile friendly and PWA installable.
+
+7) MODEL EVALUATION & BENCHMARKS
+
+Implement automated benchmarks:
+
+FID (Fréchet Inception Distance) on a held-out validation set.
+
+IS (Inception Score) optionally.
+
+CLIP Score for prompt→image alignment (higher is better).
+
+Human evaluation UI for raters to compare outputs (A/B) on realism, composition, and prompt adherence.
+
+Track latency (ms per image) and throughput (images/min per GPU).
+
+Define acceptance criteria:
+
+CLIP score above baseline (report baseline).
+
+FID lower than baseline fine-tune checkpoint.
+
+Human raters prefer this model’s output over baseline on X% cases.
+
+8) TOOLING — upscalers, face-fixer, and postprocessing
+
+Integrate Real-ESRGAN (or ESRGAN variants) for 2×/4× upscaling.
+
+Integrate GFPGAN for face restoration.
+
+Add optional color/contrast auto-adjust and perceptual sharpening.
+
+Provide batch postprocessing pipeline.
+
+9) REPRODUCIBILITY & CHECKPOINTS
+
+Save checkpoints every N steps; include training config (yaml), tokenizer, VAE weights, U-Net weights, optimizer state, EMA weights.
+
+Provide train.py, finetune.py, sample.py scripts with CLI.
+
+Provide Dockerfile and docker-compose for local dev (CPU fallback) and a production deployment guide with GPU instance types.
+
+Model card + license + provenance data (which datasets used).
+
+10) LOGS, METRICS & MONITORING
+
+Log training metrics to Weights & Biases (wandb) or TensorBoard.
+
+Track inference usage, failed generations, flagged prompts.
+
+Admin dashboard for takedowns and monitoring.
+
+11) PRIVACY, LEGAL & ETHICS (required in prompt)
+
+Include a LEGAL.md describing: dataset licenses used, takedown policy, user responsibilities, permitted uses, and disclaimer about copyrighted content.
+
+Add opt-out and retraining policy: how to remove user images from training if requested.
+
+Provide guidance for content moderation and user reporting.
+
+12) DELIVERABLES (explicit, must produce these in repo)
+
+Full monorepo: /model/ (training code + configs), /server/ (inference API), /web/ (React UI), /workers/, /tools/ (dataset scripts).
+
+README.md with step-by-step local run, training from scratch, fine-tuning, and deployment.
+
+DATA_LICENSE_MANIFEST.json tracking dataset sources + licenses used.
+
+Training scripts with example configs and minimal toy dataset to run end-to-end locally.
+
+Inference API with POST /v1/generate and websockets streaming progress.
+
+Web UI with prompt editor, gallery, inpaint, upscaler.
+
+Safety systems: NSFW classifier integration, copyright similarity checker, watermarking option.
+
+Dockerfile(s) and Docker Compose for local dev (API + DB + Redis).
+
+Unit tests for core pipelines (data loader, sampling, API).
+
+Model card, LICENSE, and LEGAL.md.
+
+Cost & compute estimate table (GPU hours, storage) for training sizes (100k images, 1M images).
+
+Benchmark results (sample FID/CLIP) on toy dataset and instructions to reproduce.
+
+13) IMPLEMENTATION TIMELINE & COMPUTE ESTIMATE (for agent to include)
+
+Prototype (local toy): 1–3 days (small dataset 1k–10k, single GPU).
+
+Quality fine-tune (~100k images): weeks depending on GPUs (multi-GPU cluster recommended).
+
+Production-grade (1M+ images): months and multi-GPU infra (A100 class).
+
+Provide a table with GPU types, recommended batch sizes, approx hours, and cost estimates.
+
+14) EXAMPLES & PROMPT PRESETS
+
+Provide a JSON/JS file with presets:
+
+photorealistic: "ultra-realistic, 35mm lens, cinematic lighting, high detail"
+
+anime: "anime style, clean linework, vibrant colors, studio lighting"
+
+oil_painting: "oil painting, impasto texture, Rembrandt lighting"
+Also provide negative prompt templates: "lowres, deformed, watermark, text, extra limbs".
+
+15) ADMIN & USER FEATURES
+
+API keys + per-key rate limits and quota management (credits).
+
+Billing placeholder (stripe test integration) for production.
+
+Admin takedown / audit UI to remove images from gallery and block prompts/users.
+
+User dashboard: usage logs, saved prompts, favorite images, and opt-out data removal request.
+
+16) FINAL INSTRUCTIONS FOR THE AI DEVELOPER (put at top of generated repo)
+
+Start by scaffolding the monorepo and package.jsons for each module.
+
+Provide a complete working toy example that can be run locally (train on 1k images and generate). This must be runnable in limited GPU or CPU (slower).
+
+Then add full training pipeline, dataset tools, evaluation scripts, inference API, and web UI.
+
+Comment all code thoroughly and provide clear README.md for each part.
+
+DO NOT include or train on proprietary images without explicit license; include automated license filtering.
+
+Produce tests & CI config.
+
+✅ Final short warnings to include in repo (copy these into README)
+
+Legal: Training on copyrighted images without permission may be illegal. Use only appropriately licensed images.
+
+Ethics: This model can generate harmful or deceptive images; include content policy and moderation.
+
+Safety: Provide NSFW filtering and user reporting.
+
+Provenance: Keep dataset manifest for audits.
