@@ -1,0 +1,248 @@
+I want you to build a complete, production-grade conversational AI system (ChatGPT-style) — model + training pipeline + safety & moderation + inference API + web/chat UI + ops — step-by-step and runnable. Generate full code, configs, docs and deliverables without asking clarifying questions.
+
+High-level goals:
+
+A transformer-based conversational language model (decoder or encoder-decoder) that supports multi-turn chat, system/user/instruction roles, few-shot priming, streaming token output, context windows, and safety filters.
+
+Provide both a toy local training path (small dataset, runs on single GPU/CPU) and a production training / fine-tuning path (RLHF pipeline recommended) with reproducible configs.
+
+Include inference API with streaming, rate limiting, API keys, batching, and metrics; a React chat UI (PWA); admin moderation tools; and docs & model card.
+
+Integrate safety: policy enforcement, prompt filters, toxicity detectors, content scoring, human-in-the-loop moderation and opt-out/data deletion flows.
+
+1) Technology stack (must use these)
+
+ML framework: PyTorch + Hugging Face Transformers + Accelerate (support multi-GPU & mixed precision)
+
+RLHF / reward optimization: use trl (Hugging Face TRL) or a custom PPO implementation; support supervised fine-tuning (SFT) + reward modeling + PPO.
+
+Tokenizer: Byte-pair encoding (BPE) / SentencePiece / GPT-2 tokenizer — provide tokenizer training scripts.
+
+Data storage: parquet/JSONL manifests + S3 compatible storage for big datasets.
+
+Serving: FastAPI + Uvicorn for HTTP + WebSocket streaming; optional Triton / TorchServe for optimized GPU inference.
+
+Backend infra: PostgreSQL for metadata/users, Redis for caching/queues, Celery/RQ for background tasks, RabbitMQ optional.
+
+Frontend: React + Vite + Tailwind — chat UI with streaming, conversation history, settings, and API key management.
+
+Monitoring: Prometheus + Grafana + Sentry.
+
+DevOps: Docker + docker-compose for local dev; CI with GitHub Actions.
+
+2) Model architecture & options (explicit)
+
+Provide two starter model options (implement both paths and let user choose):
+
+Small/experimental: Transformer decoder model (~100M–1B params) — good for local experiments. Use GPT-Neo/GPT-2 style config.
+
+Production/fine-tune: Start from an open checkpoint (Llama 2, Mistral, or other permissively licensed open models) and fine-tune with SFT and RLHF. (Important: ensure license compatibility).
+
+Model features:
+
+Tokenizer + position embedding handling for long context (implement sliding window / retrieval augmentation).
+
+Support for system / user / assistant role tokens.
+
+Support FP16/AMP, gradient accumulation, and ZeRO offload (DeepSpeed optional).
+
+Streaming generation API with chunked token output.
+
+3) Datasets & curation (must include scripts)
+
+Datasets to integrate (only if license allows):
+
+Public instruction datasets: OpenAI-style public instruction datasets, Stack Exchange dumps (where allowed), Pile subsets, OpenAssistant, Alpaca-style datasets, Dolly (if license-compatible), and carefully curated dialogue datasets.
+
+Conversation / chat logs: only public / licensed sources.
+
+Synthetic data scripts: prompt-template generator to create extra instruction variations.
+
+Curation pipeline to implement:
+
+Ingest manifest (JSONL with {text, prompt, response, source, license})
+
+De-duplicate (hash/text similarity), profanity & PII redaction, content labeling (toxicity/nsfw), and dataset license tracking.
+
+Create SFT training splits, reward model train set, and evaluation sets.
+
+Provide prepare_data.py that outputs tokenized dataset ready for Trainer or custom loop.
+
+4) Training & RLHF pipeline (explicit steps)
+
+Supervised Fine-Tuning (SFT):
+
+Script train_sft.py using HF Trainer or custom loop; support config YAMLs for LR, batch size, schedulers, epochs.
+
+Logging to WandB/TensorBoard.
+
+Reward Modeling:
+
+Collect human preference data: pairwise comparisons between model responses.
+
+Train a reward model reward_model.py that maps (prompt, response) → scalar reward.
+
+PPO / RLHF:
+
+Use trl (Hugging Face TRL) or custom PPO to optimize SFT model with reward model.
+
+Provide train_ppo.py with safe defaults, KL-penalty to reference policy, and checkpoints.
+
+Safety during RLHF:
+
+Integrate safety reward penalties (e.g., high penalty for toxic responses, privacy leaks).
+
+Ensure safe exploration: filter generated samples fed to reward model or human raters.
+
+5) Safety & moderation (must implement)
+
+Pre-prompt filter: block/flag illegal/explicit/PII requests (configurable).
+
+Output filter: run toxicity/NSFW detectors on generated outputs; if flagged, either refuse or rewrite with safe alternative. Use detoxify / Perspective API / custom classifier.
+
+Red teaming scripts: automated adversarial prompt generator to stress-test model.
+
+User reporting & human review queue: store reports in DB, present in admin UI, and support retraining/penalty.
+
+Rate limits & usage quotas per API key.
+
+Data governance: endpoints to request data export & deletion; logs for auditability.
+
+6) Inference API & routes (must provide)
+
+Implement FastAPI endpoints:
+
+POST /v1/generate — body: {prompt, history, max_tokens, temperature, top_p, stream:boolean, user_id, system_instructions} → stream tokens if stream=true.
+
+POST /v1/chat — for multi-turn simplified usage with {conversation_id}.
+
+POST /v1/embedding — produce embeddings with same backbone for retrieval.
+
+POST /v1/feedback — collect human feedback for RLHF.
+
+POST /v1/login & POST /v1/register — API key / user auth.
+
+GET /v1/usage — usage stats for API keys.
+
+POST /v1/moderate — moderation endpoint for text checks.
+
+WebSocket ws://.../stream — optional streaming channel for token chunks and intermediate logits.
+
+Include API key auth middleware, rate limiting (Redis), and per-user quota.
+
+7) Frontend chat UI (features)
+
+React chat UI with:
+
+System prompt toggle, role editing.
+
+Conversation list with save/load.
+
+Streaming token display (typewriter effect).
+
+Message actions: edit, regenerate, upvote/downvote, pin, export.
+
+Settings: model choice, temperature, max tokens, context length.
+
+Admin moderation UI + human review queue.
+
+Provide PWA support and client token storage; instructions for hosting.
+
+8) Retrieval & long-context (optional but required for production)
+
+Implement retrieval-augmented generation (RAG): build a vector DB (FAISS or Milvus), embed user docs, do kNN retrieval, and prepend retrieved snippets to prompt. Provide retrieval_service.py.
+
+9) Evaluation & metrics
+
+Implement automated evaluation:
+
+Perplexity on validation set.
+
+BLEU/ROUGE where applicable.
+
+Human eval interface for pairwise comparisons.
+
+Safety metrics: percent of flagged responses on adversarial suite.
+
+Report latency, throughput (tokens/sec), and cost estimate per 1M tokens.
+
+10) Deployment & scaling
+
+Provide Dockerfile for API, model server, and worker; docker-compose for local dev (postgres, redis, minio).
+
+Provide production notes for Kubernetes + GPU node pools, autoscaling, model sharding, and sticky sessions for streaming.
+
+Provide optional Triton/ONNX export flow and batching for throughput.
+
+11) Logging, monitoring & observability
+
+Log requests & anonymized prompts for debugging (respect privacy config).
+
+Collect metrics: requests/s, avg latency, error rates, token usage.
+
+Sentry for exceptions; Prometheus metrics export.
+
+12) Deliverables (explicit must produce)
+
+The AI agent must output a runnable repo with:
+
+/model/ — tokenizer, model configs, train_sft.py, train_ppo.py, reward_model.py, sample checkpoints.
+
+/server/ — FastAPI inference server with streaming, auth, rate limits, and background workers.
+
+/web/ — React chat UI (PWA) with streaming & admin panels.
+
+/data/ — data ingestion & curation scripts and sample toy dataset (few KBs) to run end-to-end locally.
+
+/infra/ — docker-compose, k8s manifests (example), and deployment guide.
+
+/tests/ — unit & integration tests for critical paths.
+
+MODEL_CARD.md and LEGAL.md documenting licenses, risks, and takedown policy.
+
+README.md with step-by-step local run, toy train, fine-tune, RLHF instructions, and API docs.
+
+Monitoring & CI config (GitHub Actions).
+
+Cost & compute estimate table for different model scales (100M, 1B, 7B params).
+
+13) Compute & data estimates (include table in repo)
+
+Small toy model (100M): single GPU (16–24GB) — few hours for toy dataset.
+
+Mid (1B): multi-GPU or single A100 with gradient accumulation — days–weeks.
+
+Large (7B+): multi-GPU cluster, weeks, significant cost.
+Include GPU hours & approximate $ cost estimates.
+
+14) Safety & ethics reminders (must be prominent in README)
+
+Do not train on private user chats without consent.
+
+Provide rate limits & abuse detection.
+
+Offer data deletion & export endpoints.
+
+Maintain changelog & dataset provenance.
+
+15) Final instructions for the code generator
+
+Start by scaffolding the monorepo and package files for model/server/web.
+
+Create a toy, end-to-end example that runs locally: train SFT on tiny dataset (few hundred examples), start server, and use web UI to chat with the model. This must be runnable without large GPUs (CPU fallback allowed, but slower).
+
+Then add SFT → reward model → PPO scripts, plus evaluation harness.
+
+Implement safety filters, rate limiting, and admin review queues.
+
+Comment all code and provide clear YAML configs for hyperparameters and env variables.
+
+Produce tests and CI configs.
+
+16) Quick copyable short warnings to include in repo
+
+Legal: Do not use copyrighted private data without permission.
+
+Safety: This model can produce harmful or inaccurate outputs; include disclaimers and human review.
+
+Privacy: Provide opt-out & deletion flows.
