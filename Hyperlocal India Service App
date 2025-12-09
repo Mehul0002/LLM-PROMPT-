@@ -1,0 +1,445 @@
+Build a fully functional production-ready Hyperlocal India Service App named ‘DesiFix’. This should be a complete full-stack app (frontend + backend + database + admin panel) inside Replit.”
+
+🔶 PURPOSE OF THE APP
+
+This Indian app will allow:
+
+1️⃣ User Side
+
+Book local service professionals (Plumber, Electrician, Carpenter, Painter, AC Repair, Tuition, Tailor, Maid, Mechanic etc.)
+
+Location-based listing
+
+Document-verified professionals only
+
+Book service with date & time
+
+Chat with service provider (text + images + video)
+
+Pay later (COD) or Online payment
+
+Track booking status
+
+User dashboard:
+
+past bookings
+
+upcoming bookings
+
+complaints
+
+profile
+
+address
+
+2️⃣ Service Provider Side
+
+(Same app → separate login option)
+
+Register using:
+
+Aadhar Card
+
+PAN
+
+Driving License
+
+Any govt ID
+
+Upload verification documents
+
+Add skills/categories
+
+Service price range
+
+Set availability (Online/Offline)
+
+Accept/Reject user bookings
+
+Chat with user
+
+Service Provider Dashboard:
+
+total jobs done
+
+upcoming jobs
+
+earnings
+
+user ratings
+
+monthly performance graph
+
+3️⃣ Admin Panel (Web Dashboard)
+
+Approve or reject service provider verification
+
+See total users
+
+Total orders
+
+Total revenue
+
+View complaints
+
+Block any user/provider
+
+Manage categories
+
+Show dashboard analytics
+
+🔵 🔧 TECH STACK YOU MUST USE: Frontend
+
+React + TailwindCSS
+
+Responsive and aesthetic UI
+
+Completely modern, minimal, clean UI
+
+Use icons and animations
+
+Backend
+
+Node.js + Express
+
+JWT Authentication
+
+Multer for image/video uploads
+
+Geo-location based filtering
+
+OTP verification with Firebase Auth
+
+Database
+
+MongoDB (Mongoose)
+
+Notifications
+
+Firebase Cloud Messaging (FCM)
+
+File Uploads
+
+Cloudinary for images & videos
+
+Chat System
+
+Socket.IO (real-time messaging)
+
+🔵 APP SCREENS YOU MUST CREATE 🔹 Welcome / Splash Screen 🔹 Login Choice
+
+“I am a User”
+
+“I am a Service Provider”
+
+📌 USER SCREENS
+
+Login (Phone OTP)
+
+Home (category grid)
+
+Nearby professionals (with map)
+
+Professional profile
+
+Booking page
+
+Payment selection
+
+Booking summary
+
+Chat screen
+
+User dashboard
+
+Profile
+
+Addresses
+
+Past orders
+
+Ratings
+
+📌 SERVICE PROVIDER SCREENS
+
+Register
+
+Upload documents
+
+Add skills
+
+Add service details
+
+Dashboard
+
+Job requests
+
+Accept/Reject
+
+Chat
+
+Earnings report
+
+Monthly progress graph
+
+📌 ADMIN PANEL (WEB)
+
+Login
+
+Dashboard analytics
+
+Approve Service Providers
+
+Manage categories
+
+Block users
+
+Booking stats
+
+Payment records
+
+Complaints
+
+🔵 CORE FEATURES YOU MUST IMPLEMENT
+
+OTP Login (User + Provider)
+Using Firebase.
+
+Document Upload + Verification Workflow
+Role-Based Login
+If user → user dashboard
+
+If provider → provider dashboard
+
+Admin → admin panel
+
+Location-Based Results
+Capture user location
+
+Show nearest professionals
+
+Use latitude/longitude filtering
+
+Real-time Booking Flow
+User books → Provider receives request
+
+Provider accepts → User gets notification
+
+Provider rejects → Show alternative providers
+
+In-App Chat
+Real-time chat
+
+Upload image/video
+
+Seen/unseen messages
+
+Notifications
+Booking status
+
+Provider online/offline
+
+User updates
+
+Analytics
+Daily/Weekly/Monthly graphs
+
+Provider earnings
+
+🔵 UI/UX REQUIREMENTS
+
+Make the UI:
+
+Aesthetic
+
+Minimal
+
+Modern
+
+Smooth animations
+
+Friendly colors
+
+Rounded corners
+
+Professional icons
+
+Clean layout
+
+🔵 YOUR TASK:
+
+👉 Generate a complete production-ready codebase inside Replit including:
+
+Frontend folder
+
+Backend folder
+
+Admin panel
+
+MongoDB models
+
+APIs
+
+SocketIO chat server
+
+Authentication
+
+Document upload system
+
+Notifications
+
+Full UI with Tailwind
+
+The entire app must run inside Replit.
+
+Include detailed README, installation guide, and environment variable templates. 1) Project folder structure (monorepo, Replit-friendly) desifix/ ├─ README.md ├─ .env.example ├─ frontend/ # React + Vite + Tailwind (User + Provider) │ ├─ package.json │ ├─ src/ │ │ ├─ main.jsx │ │ ├─ App.jsx │ │ ├─ pages/ │ │ │ ├─ Auth/ │ │ │ │ ├─ Login.jsx │ │ │ │ ├─ RoleSelect.jsx │ │ │ ├─ User/ │ │ │ │ ├─ Home.jsx │ │ │ │ ├─ BookForm.jsx │ │ │ │ ├─ BookingList.jsx │ │ │ │ ├─ Chat.jsx │ │ │ ├─ Provider/ │ │ │ │ ├─ Onboard.jsx │ │ │ │ ├─ ProviderDash.jsx │ │ ├─ components/ │ │ │ ├─ Header.jsx │ │ │ ├─ Card.jsx │ │ │ ├─ MapView.jsx │ │ ├─ services/ │ │ │ ├─ api.js # axios instance │ │ │ ├─ socket.js │ ├─ tailwind.config.js ├─ backend/ │ ├─ package.json │ ├─ src/ │ │ ├─ index.js # Express server │ │ ├─ config/ │ │ │ ├─ db.js │ │ │ ├─ firebase.js # OTP config │ │ ├─ routes/ │ │ │ ├─ auth.js │ │ │ ├─ users.js │ │ │ ├─ providers.js │ │ │ ├─ bookings.js │ │ │ ├─ admin.js │ │ ├─ controllers/ │ │ ├─ models/ # Mongoose models │ │ ├─ utils/ │ │ │ ├─ geo.js │ │ │ ├─ upload.js # Cloudinary multer │ ├─ socket/ # Socket.IO server handlers (chat & booking notifications) ├─ admin-panel/ # Optional separate React app (or under frontend/admin) ├─ infra/ │ ├─ docker-compose.yml │ ├─ nginx.conf └─ docs/ ├─ api-spec.md ├─ data-models.md
+
+✅ 2) MongoDB (Mongoose) Schemas — simplified (fields + explanation) User User { _id, name: String, phone: String, // unique role: "user" | "provider" | "admin", addresses: [{label, line1, city, pincode, location:{lat,lng}}], avatarUrl, createdAt, updatedAt, verified: Boolean }
+
+Provider Provider { _id, userRef: ObjectId, // reference to User categories: [String], // e.g., ["Plumber","AC"] services: [{ title, description, basePrice, priceRange, durationMins }], documents: [{ type: "Aadhar"|"PAN"|"DL", fileUrl, status: "pending"|"approved"|"rejected" }], location: { lat, lng, areaCode, city }, availability: { online: Boolean, schedule: [...] }, rating: { avg: Number, count: Number }, earnings: Number, createdAt, updatedAt }
+
+Booking Booking { _id, userId, providerId (nullable until assigned), category, serviceDetail, description, photos: [url], videoUrl, address, location:{lat,lng}, preferredDateTime, status: "requested"|"assigned"|"accepted"|"in_progress"|"completed"|"cancelled", priceQuoted, paymentMode: "COD"|"Online", createdAt, updatedAt, chatRoomId, }
+
+ChatMessage ChatMessage { _id, bookingId, fromUserId, toUserId, text, media: [url], timestamp, seen: Boolean }
+
+Admin / Audit VerificationRequest { providerId, documents, submittedAt, reviewedBy, reviewedAt, decision } Report { reporterId, targetId (user/provider), bookingId, reason, status }
+
+✅ 3) API Endpoints (high-level, routes + purpose) Auth
+
+POST /api/auth/send-otp — send OTP via Firebase (body: phone, role)
+
+POST /api/auth/verify-otp — verify OTP -> returns JWT + user profile
+
+POST /api/auth/register-provider — initial provider registration (basic info)
+
+Users
+
+GET /api/users/me — profile
+
+PUT /api/users/me — update profile, add address
+
+Providers
+
+POST /api/providers/onboard — upload documents, skills
+
+GET /api/providers/nearby?lat=&lng=&cat=Plumber — list nearby available providers (returns providers in area, distance)
+
+GET /api/providers/:id — provider public profile + reviews
+
+Bookings
+
+POST /api/bookings — create booking request
+
+GET /api/bookings/:id — booking details
+
+GET /api/bookings/user — bookings for logged-in user
+
+GET /api/bookings/provider — bookings for logged-in provider
+
+PUT /api/bookings/:id/assign — admin/provider assign
+
+PUT /api/bookings/:id/status — update (accept, start, complete, cancel)
+
+POST /api/bookings/:id/price-quote — provider sends quote
+
+Chat
+
+GET /api/chat/:bookingId/history
+
+POST /api/chat/:bookingId/message — text/media (upload via Cloudinary)
+
+Admin
+
+GET /api/admin/providers/pending — list of pending verifications
+
+PUT /api/admin/providers/:id/verify — approve/reject
+
+GET /api/admin/stats — basic analytics
+
+✅ 4) Key flows (textual) — 3 main flows Flow A — User books a plumber
+
+User login via OTP → select category “Plumber” → fill problem (text + photo) → choose address + preferred time → Submit booking.
+
+Backend stores booking with status requested. System finds providers in area and pushes request to their dashboard queue (Socket.IO / notification).
+
+Provider gets a request (can accept/reject). If accepted → status assigned and user notified and chat room created.
+
+Provider arrives → marks in_progress → completes → marks completed. Payment via COD or online. Rating prompt shown.
+
+Flow B — Provider onboarding & verification
+
+Provider registers (phone OTP), fills details, uploads Aadhar/PAN/DL.
+
+Admin reviews verification via admin panel, can approve/reject. On approval provider verified=true and visible to users.
+
+Flow C — Chat between user & provider (for booking)
+
+Socket.IO room keyed by bookingId. Messages saved to ChatMessage collection. Uploads via Cloudinary signed upload, then send URL.
+
+✅ 5) Frontend UI wireframe + components (quick) Key pages & components
+
+Splash / RoleSelect: big CTA buttons (User / Provider)
+
+Home (User): Search bar, categories cards, “Nearby providers” list, map toggle
+
+BookForm: select category → describe problem → add photos → choose slot → confirm
+
+Provider profile: rating, services, priceRange, verification badge
+
+BookingList: upcoming + past bookings with status chips
+
+Chat: message list + input + attachment button
+
+Provider Dashboard: incoming requests queue, calendar, earnings card, accept/reject buttons
+
+Admin Panel: table of provider verification requests, stats cards
+
+UI notes: Use Poppins font, rounded cards, glassy buttons. Dark/light toggle optional. Mobile-first.
+
+✅ 6) Cloud & 3rd-party config (quick)
+
+Firebase Auth for OTP
+
+Cloudinary account for media uploads
+
+MongoDB Atlas (free tier) for DB
+
+FCM for push notifications
+
+Replit Secrets / .env for keys:
+
+MONGO_URI, JWT_SECRET, FIREBASE_* , CLOUDINARY_*
+
+✅ 7) Minimal README snippet (copy into repo)
+
+Copy .env.example -> .env and fill keys (MONGO_URI, JWT_SECRET, CLOUDINARY_, FIREBASE_)
+In backend: cd backend && npm install && npm run dev
+In frontend: cd frontend && npm install && npm run dev
+In Replit, create two repls or a monorepo run config (frontend + backend).
+POST /api/auth/send-otp
+POST /api/bookings
+GET /api/providers/nearby
+Provider document verification must be approved by admin before listing.
+✅ 8) 3 Logo / Brand ideas (quick)
+
+DesiFix — logo: wrench + map-pin combined (rounded teal/orange), tagline: “Har Kaam Yahin”
+
+HelpBharat — logo: handshake inside location pin (saffron + green), tagline: “Local ka Jugaad — Trusted”
+
+LocalWale — logo: smiling avatar with toolbox, simple navy + yellow
+
+(If chaho, mai SVG / PNG sample bana ke de dunga.)
+
+✅ 9) Next step options — pick one and mai turant kar deta hoon
+
+“Scaffold repo now” — mai frontend + backend skeleton code + sample components/models banakar dunga (recommended).
+
+“Give full API code” — mai Express routes + controllers + Mongoose models generate kar dunga.
+
+“Give full React UI” — mai main pages + Tailwind components generate kar dunga.
+
+“Make admin panel” — scaffold admin React app.
+
+“Generate logo images” — 3 SVG logos.
+
+“All of the above” — mai full scaffold (larger output).
