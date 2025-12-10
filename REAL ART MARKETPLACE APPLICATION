@@ -1,0 +1,378 @@
+🎯 APP PURPOSE
+
+Create a full-stack production-grade application where:
+
+✔ Artists can register → verify → upload their REAL art
+✔ Buyers can browse → purchase → review art pieces
+✔ Only ORIGINAL art is allowed (AI-generated or copied art is blocked)
+✔ Every uploaded art must pass “authenticity verification”
+✔ App should look like a premium global e-commerce platform
+🎨 APP NAME SUGGESTION
+
+ArtNexa
+
+TrueArtHub
+
+RealCanvas
+
+ArtifyMarket
+
+OriginArt Marketplace
+
+🧩 CORE MODULES REQUIRED
+
+This app MUST include:
+
+✔ Artist verification system
+
+Government ID upload
+
+Selfie verification
+
+Manual + AI-based authenticity check
+
+Approval/rejection system
+
+Artist dashboard after approval
+
+✔ Art authenticity filter
+
+Reject AI-generated, copied, stolen art
+
+Use watermark detection
+
+Reverse image search check
+
+Hash comparison method
+
+✔ Product listing system
+
+Title
+
+Art Category (Painting, Sketch, Digital Hand Drawn, Sculpture)
+
+Price
+
+Description
+
+Live preview images
+
+Quantity
+
+Dimensions
+
+Weight
+
+Frame/No Frame
+
+Condition
+
+Shipping rules
+
+✔ Global Ecommerce features
+
+Add to cart
+
+Wishlist
+
+Buy now
+
+Global delivery
+
+Multi-currency support
+
+Discount codes
+
+Order tracking
+
+✔ Admin Panel
+
+Verify artists
+
+Review authenticity data
+
+Block users
+
+Approve artworks
+
+Payment & revenue dashboard
+
+Dispute management
+
+Full analytics board
+
+✔ Aesthetic UI
+
+Clean, premium, luxury marketplace look
+
+Pastel, teal, navy blue, gold accents
+
+Smooth animations
+
+Modern card design
+
+Apple-like elegance
+
+User-friendly and readable
+
+💻 TECH STACK (MANDATORY)
+Frontend
+
+React + Vite
+
+TailwindCSS
+
+ShadCN UI
+
+Framer Motion
+
+Responsive Mobile-first UI
+
+Backend
+
+Node.js
+
+Express
+
+Mongoose / MongoDB
+
+Multer + Cloudinary
+
+JWT Auth
+
+Reverse image authenticity system
+
+Payment Gateway: Stripe + RazorPay
+
+AI-based Authenticity Check
+
+Integrate these checks:
+
+Image reverse search check
+
+Metadata & EXIF scanning
+
+AI-generated detection model
+
+Duplicate image hashing
+
+If it seems copied, system must:
+❌ Reject artwork
+⚠ Notify artist with reason
+
+🔐 AUTHENTICATION (Mandatory)
+Artists
+
+Phone OTP + Email verification
+
+Government ID upload (Aadhar/Passport/Driving License)
+
+Selfie verification
+
+Admin approval → Only then artist dashboard unlocks
+
+Buyers
+
+Email/Phone login
+
+Basic user profile
+
+Delivery addresses
+
+📦 PRODUCT WORKFLOW (Very Important)
+Step 1: Artist uploads artwork
+
+AI runs multiple checks:
+
+Duplicate checking
+
+Reverse search
+
+Metadata patterns
+
+Realness score (1–100)
+
+If score < 60 ➝ Reject
+If 60–80 ➝ Manual review
+If > 80 ➝ Auto approve
+
+Step 2: Admin verification (optional)
+Step 3: Artwork goes live globally
+📚 DATABASE SCHEMA (Simplified)
+User
+User {
+ id,
+ name,
+ email,
+ phone,
+ role: "buyer" | "artist" | "admin",
+ isVerified,
+ addresses,
+ createdAt
+}
+
+Artist Profile
+Artist {
+ userId,
+ documents: {idType, image, status},
+ selfieImage,
+ verified: Boolean,
+ bio,
+ portfolioLinks,
+ totalSales
+}
+
+Artwork
+Artwork {
+ id,
+ artistId,
+ title,
+ description,
+ category,
+ price,
+ quantity,
+ dimensions,
+ weight,
+ images: [url],
+ authenticityScore,
+ authenticityStatus: "pending"|"approved"|"rejected",
+ createdAt
+}
+
+Order
+Order {
+ id,
+ buyerId,
+ items: [{artworkId, qty, price}],
+ shippingAddress,
+ totalAmount,
+ currency,
+ status,
+ createdAt
+}
+
+📡 APIs YOU MUST BUILD
+Authentication
+
+POST /auth/register
+
+POST /auth/login
+
+POST /auth/verify-artist
+
+Artwork
+
+POST /art/upload (with filters & AI check)
+
+GET /art/all
+
+GET /art/category/:name
+
+GET /art/:id
+
+DELETE /art/:id
+
+Orders
+
+POST /order/create
+
+GET /order/user
+
+GET /order/:id
+
+Admin
+
+GET /admin/artists/pending
+
+PUT /admin/artist/:id/approve
+
+GET /admin/art/pending
+
+PUT /admin/art/:id/review
+
+🎨 UI/UX REQUIREMENTS (Very Important)
+Home Page
+
+Hero section with floating art frames
+
+Top categories
+
+Trending artwork slider
+
+Filters: price, rating, category
+
+Product Page
+
+High-quality image viewer
+
+Zoom on hover
+
+Related artworks
+
+Artist profile link
+
+Artist Dashboard
+
+Upload artwork
+
+Earnings
+
+Inventory
+
+Views & stats
+
+Sales chart
+
+Admin Panel
+
+Big analytics cards
+
+Country-wise sales chart
+
+Artist verification table
+
+Art authenticity reports
+
+🔔 NOTIFICATIONS
+
+Use Firebase Cloud Messaging (FCM) for:
+
+Order placed
+
+Artwork approved/rejected
+
+Artist verified
+
+Buyer messages
+
+🌍 GLOBAL SUPPORT
+
+Language selector
+
+Currency auto-detection
+
+International shipping rules
+
+🚀 YOUR TASK
+
+Generate the COMPLETE FULL-STACK APP in Replit, including:
+
+Frontend code
+
+Backend code
+
+Database models
+
+Auth system
+
+Real-time notifications
+
+Global e-commerce logic
+
+Admin panel
+
+Fully aesthetic UI
+
+Complete documentation
+
+Environment file sample
